@@ -10,7 +10,6 @@ lerna-debug.log*
 CLAUDE.md
 
 node_modules/
-dist/
 dist-ssr
 *.local
 
