@@ -1,0 +1,127 @@
+:root {
+    font-family:
+        'Inter',
+        system-ui,
+        -apple-system,
+        sans-serif;
+    line-height: 1.5;
+    font-weight: 400;
+
+    color-scheme: dark;
+    color: rgba(255, 255, 255, 0.87);
+    background-color: #0a0a0f;
+
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-width: 320px;
+    min-height: 100vh;
+    overflow: hidden;
+    background-color: #0a0a0f;
+}
+
+#root {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+
+a {
+    font-weight: 500;
+    color: #646cff;
+    text-decoration: inherit;
+}
+
+a:hover {
+    color: #535bf2;
+}
+
+button {
+    border-radius: 6px;
+    border: 1px solid rgba(100, 100, 120, 0.3);
+    padding: 0.6em 1.2em;
+    font-size: 0.9em;
+    font-weight: 500;
+    font-family: inherit;
+    background-color: rgba(30, 30, 40, 0.8);
+    color: #e0e0e0;
+    cursor: pointer;
+    transition: all 0.25s;
+}
+
+button:hover {
+    border-color: #646cff;
+    background-color: rgba(40, 40, 50, 0.9);
+}
+
+button:focus,
+button:focus-visible {
+    outline: 2px solid #646cff;
+    outline-offset: 2px;
+}
+
+input[type='text'],
+input[type='search'] {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid rgba(100, 100, 120, 0.3);
+    border-radius: 6px;
+    background-color: rgba(20, 20, 30, 0.8);
+    color: #e0e0e0;
+    font-size: 14px;
+    font-family: inherit;
+    transition: border-color 0.2s;
+}
+
+input[type='text']:focus,
+input[type='search']:focus {
+    outline: none;
+    border-color: #646cff;
+}
+
+input[type='text']::placeholder,
+input[type='search']::placeholder {
+    color: rgba(224, 224, 224, 0.4);
+}
+
+.aviation-input {
+    margin-bottom: 12px;
+}
+
+.layer-checkbox {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.layer-checkbox input[type='checkbox'] {
+    margin-right: 10px;
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+}
+
+.layer-checkbox span {
+    color: #d0d0d0;
+    font-size: 14px;
+}
+
+.info-text {
+    color: rgba(224, 224, 224, 0.6);
+    font-size: 13px;
+    font-style: italic;
+}
