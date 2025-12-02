@@ -61,7 +61,7 @@ export const MapBox = ({
             })
 
             const loadAirportIcons = () => {
-                // Load SVG at higher resolution for better quality when scaled
+                // Load PNG at higher resolution for better quality when scaled
                 const airportIcon = new Image(64, 64)
                 airportIcon.onload = () => {
                     if (map.current && !map.current.hasImage('airport-icon')) {
@@ -69,9 +69,9 @@ export const MapBox = ({
                     }
                 }
                 airportIcon.onerror = () => {
-                    console.error('Failed to load airport icon from ./airport.svg')
+                    console.error('Failed to load airport icon from ./airport.png')
                 }
-                airportIcon.src = './airport.svg'
+                airportIcon.src = './airport.png'
             }
 
             const loadObstacleIcon = () => {
@@ -111,9 +111,9 @@ export const MapBox = ({
                     }
                 }
                 vorIcon.onerror = () => {
-                    console.error('Failed to load VOR icon from ./vor.svg')
+                    console.error('Failed to load VOR icon from ./vor.png')
                 }
-                vorIcon.src = './vor.svg'
+                vorIcon.src = './vor.png'
 
                 // NDB icon - radio waves (higher resolution)
                 const ndbIcon = new Image(64, 64)
