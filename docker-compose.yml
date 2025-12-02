@@ -7,8 +7,12 @@ services:
       dockerfile: Dockerfile
     container_name: airspace-web
     ports:
-      - "8080:80"
+      - "80:80"     # HTTP (redirects to HTTPS)
+      - "443:443"   # HTTPS
     restart: unless-stopped
+    volumes:
+      # Mount Tailscale certificates from host
+      - /var/lib/tailscale/certs:/etc/nginx/ssl:ro
     networks:
       - airspace-network
     depends_on:
@@ -27,5 +31,6 @@ services:
 
 networks:
   airspace-network:
+    external: true
     # Use 'external: true' if connecting to an existing backend network
-    driver: bridge
+    # driver: bridge
