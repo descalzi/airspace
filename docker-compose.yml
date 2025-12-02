@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  airspace-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: airspace-web
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+    networks:
+      - airspace-network
+    depends_on:
+      - airspace-backend
+
+  # If your backend is in a separate repo/folder, remove this service
+  # and use an external network to connect to it
+  # airspace-backend:
+  #   build: ../airspace-backend
+  #   container_name: airspace-backend
+  #   ports:
+  #     - "8000:8000"
+  #   restart: unless-stopped
+  #   networks:
+  #     - airspace-network
+
+networks:
+  airspace-network:
+    # Use 'external: true' if connecting to an existing backend network
+    driver: bridge
