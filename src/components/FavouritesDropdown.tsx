@@ -163,9 +163,9 @@ export const FavouritesDropdown = ({
                                     <img
                                         src={
                                             fav.type === 'airport'
-                                                ? './airport.svg'
+                                                ? './airport.png'
                                                 : fav.type === 'navaid'
-                                                  ? './vor.svg'
+                                                  ? './vor.png'
                                                   : './vrp.svg'
                                         }
                                         alt={fav.type}
