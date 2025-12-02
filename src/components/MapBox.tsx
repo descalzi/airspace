@@ -5,7 +5,7 @@ import { config } from '../config'
 
 const MAPBOX_TOKEN = config.mapbox.token
 const MAPBOX_STYLE = config.mapbox.style
-const OPENAIP_API_KEY = config.openAIP.apiKey
+const BACKEND_URL = config.backend.url
 
 mapboxgl.accessToken = MAPBOX_TOKEN
 
@@ -54,7 +54,7 @@ export const MapBox = ({
             map.current.addSource('openaip', {
                 type: 'vector',
                 tiles: [
-                    `https://api.tiles.openaip.net/api/data/openaip/{z}/{x}/{y}.pbf?apiKey=${OPENAIP_API_KEY}`,
+                    `${BACKEND_URL}/openaip/tiles/{z}/{x}/{y}.pbf`,
                 ],
                 minzoom: 2,
                 maxzoom: 22,

@@ -14,10 +14,7 @@ export const config = {
         token: getEnvVar('VITE_MAPBOX_TOKEN'),
         style: getEnvVar('VITE_MAPBOX_STYLE'),
     },
-    openAIP: {
-        apiKey: getEnvVar('VITE_OPENAIP_API_KEY'),
-    },
-    airportDB: {
-        token: getEnvVar('VITE_AIRPORTDB_API_TOKEN'),
+    backend: {
+        url: getEnvVar('VITE_BACKEND_URL'),
     },
 } as const

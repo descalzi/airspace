@@ -2,9 +2,18 @@
 
 ## Environment Variables Setup
 
-This project uses environment variables to manage API credentials securely.
+This project uses environment variables for configuration.
 
-### Initial Setup
+### Prerequisites
+
+This frontend application requires the **airspace-backend** proxy server to be running. The backend handles all API requests to OpenAIP and AirportDB services.
+
+1. First, set up and start the backend server:
+    - Navigate to the [airspace-backend](../airspace-backend) directory
+    - Follow the setup instructions in its README
+    - Start the server (default port: 3000)
+
+### Frontend Setup
 
 1. Copy the example environment file:
 
@@ -12,11 +21,10 @@ This project uses environment variables to manage API credentials securely.
     cp .env.example .env
     ```
 
-2. Edit `.env` and fill in your API credentials:
+2. Edit `.env` and fill in your configuration:
     - **VITE_MAPBOX_TOKEN**: Get from [Mapbox Account](https://account.mapbox.com/access-tokens/)
     - **VITE_MAPBOX_STYLE**: Your Mapbox style URL (format: `mapbox://styles/username/style_id`)
-    - **VITE_OPENAIP_API_KEY**: Get from [OpenAIP](https://www.openaip.net/)
-    - **VITE_AIRPORTDB_API_TOKEN**: Get from [AirportDB](https://airportdb.io/)
+    - **VITE_BACKEND_URL**: URL to your backend proxy server (default: `http://localhost:3000`)
 
 3. Never commit the `.env` file - it's gitignored for security.
 
@@ -43,9 +51,9 @@ This project uses environment variables to manage API credentials securely.
 ### Security Notes
 
 - All variables prefixed with `VITE_` are exposed to the browser
-- These are public-facing credentials (used client-side)
-- Never commit API keys to version control
-- Rotate credentials if accidentally exposed
+- API credentials are stored securely in the backend server, not in the frontend
+- Only the backend URL is exposed to the client
+- Never commit sensitive credentials to version control
 
 ### For Production Deployment
 

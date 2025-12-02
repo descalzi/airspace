@@ -78,7 +78,7 @@ interface AirportsDetailsPanelProps {
     isFavourite: (id: string) => boolean
 }
 
-const API_TOKEN = config.airportDB.token
+const BACKEND_URL = config.backend.url
 
 interface MetarData {
     rawOb: string
@@ -220,7 +220,7 @@ export const AirportsDetailsPanel = ({
         try {
             // Fetch airport details
             const airportResponse = await fetch(
-                `https://airportdb.io/api/v1/airport/${icaoCode}?apiToken=${API_TOKEN}`,
+                `${BACKEND_URL}/airportdb/airport/${icaoCode}`,
             )
 
             if (!airportResponse.ok) {
@@ -522,7 +522,7 @@ export const AirportsDetailsPanel = ({
                                             if (!countryName) {
                                                 try {
                                                     const response = await fetch(
-                                                        `https://airportdb.io/api/v1/airport/${icaoCode}?apiToken=${API_TOKEN}`,
+                                                        `${BACKEND_URL}/airportdb/airport/${icaoCode}`,
                                                     )
                                                     if (response.ok) {
                                                         const data = await response.json()
