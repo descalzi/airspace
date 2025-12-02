@@ -63,21 +63,41 @@ export const MapBox = ({
             const loadAirportIcons = () => {
                 // Load SVG at higher resolution for better quality when scaled
                 const airportIcon = new Image(64, 64)
-                airportIcon.onload = () => map.current?.addImage('airport-icon', airportIcon)
-                airportIcon.src = './airport.svg'
+                airportIcon.onload = () => {
+                    if (map.current && !map.current.hasImage('airport-icon')) {
+                        map.current.addImage('airport-icon', airportIcon)
+                    }
+                }
+                airportIcon.onerror = () => {
+                    console.error('Failed to load airport icon from /airport.svg')
+                }
+                airportIcon.src = '/airport.svg'
             }
 
             const loadObstacleIcon = () => {
                 const obstacleIcon = new Image(64, 64)
-                obstacleIcon.onload = () => map.current?.addImage('obstacle-icon', obstacleIcon)
-                obstacleIcon.src = './tower.svg'
+                obstacleIcon.onload = () => {
+                    if (map.current && !map.current.hasImage('obstacle-icon')) {
+                        map.current.addImage('obstacle-icon', obstacleIcon)
+                    }
+                }
+                obstacleIcon.onerror = () => {
+                    console.error('Failed to load obstacle icon from /tower.svg')
+                }
+                obstacleIcon.src = '/tower.svg'
             }
 
             const loadReportingPointIcon = () => {
                 const reportingPointIcon = new Image(64, 64)
-                reportingPointIcon.onload = () =>
-                    map.current?.addImage('reporting-point-icon', reportingPointIcon)
-                reportingPointIcon.src = './vrp.svg'
+                reportingPointIcon.onload = () => {
+                    if (map.current && !map.current.hasImage('reporting-point-icon')) {
+                        map.current.addImage('reporting-point-icon', reportingPointIcon)
+                    }
+                }
+                reportingPointIcon.onerror = () => {
+                    console.error('Failed to load reporting point icon from /vrp.svg')
+                }
+                reportingPointIcon.src = '/vrp.svg'
             }
             // Load custom icons for navaids
             const loadNavaidIcons = () => {
@@ -85,12 +105,26 @@ export const MapBox = ({
 
                 // VOR icon - compass rose (higher resolution for crisp rendering)
                 const vorIcon = new Image(64, 64)
-                vorIcon.onload = () => map.current?.addImage('vor-icon', vorIcon)
-                vorIcon.src = './vor.svg'
+                vorIcon.onload = () => {
+                    if (map.current && !map.current.hasImage('vor-icon')) {
+                        map.current.addImage('vor-icon', vorIcon)
+                    }
+                }
+                vorIcon.onerror = () => {
+                    console.error('Failed to load VOR icon from /vor.svg')
+                }
+                vorIcon.src = '/vor.svg'
 
                 // NDB icon - radio waves (higher resolution)
                 const ndbIcon = new Image(64, 64)
-                ndbIcon.onload = () => map.current?.addImage('ndb-icon', ndbIcon)
+                ndbIcon.onload = () => {
+                    if (map.current && !map.current.hasImage('ndb-icon')) {
+                        map.current.addImage('ndb-icon', ndbIcon)
+                    }
+                }
+                ndbIcon.onerror = () => {
+                    console.error('Failed to load NDB icon')
+                }
                 ndbIcon.src =
                     'data:image/svg+xml;base64,' +
                     btoa(`
@@ -104,7 +138,14 @@ export const MapBox = ({
 
                 // DME icon - diamond (higher resolution)
                 const dmeIcon = new Image(64, 64)
-                dmeIcon.onload = () => map.current?.addImage('dme-icon', dmeIcon)
+                dmeIcon.onload = () => {
+                    if (map.current && !map.current.hasImage('dme-icon')) {
+                        map.current.addImage('dme-icon', dmeIcon)
+                    }
+                }
+                dmeIcon.onerror = () => {
+                    console.error('Failed to load DME icon')
+                }
                 dmeIcon.src =
                     'data:image/svg+xml;base64,' +
                     btoa(`
@@ -116,7 +157,14 @@ export const MapBox = ({
 
                 // Waypoint icon - triangle (higher resolution)
                 const waypointIcon = new Image(64, 64)
-                waypointIcon.onload = () => map.current?.addImage('waypoint-icon', waypointIcon)
+                waypointIcon.onload = () => {
+                    if (map.current && !map.current.hasImage('waypoint-icon')) {
+                        map.current.addImage('waypoint-icon', waypointIcon)
+                    }
+                }
+                waypointIcon.onerror = () => {
+                    console.error('Failed to load waypoint icon')
+                }
                 waypointIcon.src =
                     'data:image/svg+xml;base64,' +
                     btoa(`
