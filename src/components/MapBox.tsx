@@ -34,20 +34,55 @@ export const MapBox = ({
     useEffect(() => {
         if (!mapContainer.current || map.current) return
 
-        map.current = new mapboxgl.Map({
-            container: mapContainer.current,
-            style: MAPBOX_STYLE,
-            center: [0.1821, 51.1537],
-            zoom: 10,
-            pitch: 0,
-            bearing: 0,
-        })
+        // Default center (UK) - fallback if geolocation fails or is denied
+        const defaultCenter: [number, number] = [0.1821, 51.1537]
+        const defaultZoom = 10
 
-        map.current.addControl(new mapboxgl.NavigationControl(), 'bottom-right')
-        // map.current.addControl(new mapboxgl.ScaleControl(), 'bottom-right');
+        // Try to get user's location
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                // Success callback
+                position => {
+                    const userCenter: [number, number] = [
+                        position.coords.longitude,
+                        position.coords.latitude,
+                    ]
+                    console.info('Using user location:', userCenter)
+                    initializeMap(userCenter, defaultZoom)
+                },
+                // Error callback (denied permission or other error)
+                error => {
+                    console.info('Booooh! Geolocation failed, using default location:', error.message)
+                    initializeMap(defaultCenter, defaultZoom)
+                },
+                // Options
+                {
+                    enableHighAccuracy: false,
+                    timeout: 5000,
+                    maximumAge: 0,
+                },
+            )
+        } else {
+            console.info('Geolocation not supported, using default location')
+            initializeMap(defaultCenter, defaultZoom)
+        }
 
-        // Add OpenAIP vector tiles once the map style is loaded
-        map.current.on('load', () => {
+        function initializeMap(center: [number, number], zoom: number) {
+            if (!mapContainer.current || map.current) return
+
+            map.current = new mapboxgl.Map({
+                container: mapContainer.current,
+                style: MAPBOX_STYLE,
+                center: center,
+                zoom: zoom,
+                pitch: 0,
+                bearing: 0,
+            })
+
+            map.current.addControl(new mapboxgl.NavigationControl(), 'bottom-right')
+
+            // Add OpenAIP vector tiles once the map style is loaded
+            map.current.on('load', () => {
             if (!map.current) return
 
             // Add OpenAIP source
@@ -940,6 +975,7 @@ export const MapBox = ({
                 onMapReady(map.current)
             }
         })
+        }
 
         return () => {
             console.info('Removing MapBox map instance')
