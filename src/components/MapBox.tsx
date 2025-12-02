@@ -69,9 +69,9 @@ export const MapBox = ({
                     }
                 }
                 airportIcon.onerror = () => {
-                    console.error('Failed to load airport icon from /airport.svg')
+                    console.error('Failed to load airport icon from ./airport.svg')
                 }
-                airportIcon.src = '/airport.svg'
+                airportIcon.src = './airport.svg'
             }
 
             const loadObstacleIcon = () => {
@@ -82,9 +82,9 @@ export const MapBox = ({
                     }
                 }
                 obstacleIcon.onerror = () => {
-                    console.error('Failed to load obstacle icon from /tower.svg')
+                    console.error('Failed to load obstacle icon from ./tower.svg')
                 }
-                obstacleIcon.src = '/tower.svg'
+                obstacleIcon.src = './tower.svg'
             }
 
             const loadReportingPointIcon = () => {
@@ -95,9 +95,9 @@ export const MapBox = ({
                     }
                 }
                 reportingPointIcon.onerror = () => {
-                    console.error('Failed to load reporting point icon from /vrp.svg')
+                    console.error('Failed to load reporting point icon from ./vrp.svg')
                 }
-                reportingPointIcon.src = '/vrp.svg'
+                reportingPointIcon.src = './vrp.svg'
             }
             // Load custom icons for navaids
             const loadNavaidIcons = () => {
@@ -111,9 +111,9 @@ export const MapBox = ({
                     }
                 }
                 vorIcon.onerror = () => {
-                    console.error('Failed to load VOR icon from /vor.svg')
+                    console.error('Failed to load VOR icon from ./vor.svg')
                 }
-                vorIcon.src = '/vor.svg'
+                vorIcon.src = './vor.svg'
 
                 // NDB icon - radio waves (higher resolution)
                 const ndbIcon = new Image(64, 64)
