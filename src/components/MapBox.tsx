@@ -20,6 +20,7 @@ interface MapBoxProps {
     onMapReady?: (map: mapboxgl.Map) => void
     showObstacles?: boolean
     showReportingPoints?: boolean
+    hideAirways?: boolean
 }
 
 export const MapBox = ({
@@ -27,6 +28,7 @@ export const MapBox = ({
     onMapReady,
     showObstacles = true,
     showReportingPoints = true,
+    hideAirways = true,
 }: MapBoxProps) => {
     const mapContainer = useRef<HTMLDivElement>(null)
     const map = useRef<mapboxgl.Map | null>(null)
@@ -226,8 +228,12 @@ export const MapBox = ({
                 source: 'openaip',
                 'source-layer': 'airspaces',
                 filter: [
-                    '!',
-                    ['in', ['get', 'icao_class'], ['literal', ['a', 'b', 'c', 'd', 'e', 'f', 'g']]],
+                    'all',
+                    [
+                        '!',
+                        ['in', ['get', 'icao_class'], ['literal', ['a', 'b', 'c', 'd', 'e', 'f', 'g']]],
+                    ],
+                    ['!=', ['get', 'type'], 'awy'],
                 ],
                 paint: {
                     'fill-color': [
@@ -270,8 +276,12 @@ export const MapBox = ({
                 source: 'openaip',
                 'source-layer': 'airspaces',
                 filter: [
-                    '!',
-                    ['in', ['get', 'icao_class'], ['literal', ['a', 'b', 'c', 'd', 'e', 'f', 'g']]],
+                    'all',
+                    [
+                        '!',
+                        ['in', ['get', 'icao_class'], ['literal', ['a', 'b', 'c', 'd', 'e', 'f', 'g']]],
+                    ],
+                    ['!=', ['get', 'type'], 'awy'],
                 ],
                 paint: {
                     'line-color': [
@@ -312,7 +322,11 @@ export const MapBox = ({
                 type: 'fill',
                 source: 'openaip',
                 'source-layer': 'airspaces',
-                filter: ['==', ['get', 'icao_class'], 'g'],
+                filter: [
+                    'all',
+                    ['==', ['get', 'icao_class'], 'g'],
+                    ['!=', ['get', 'type'], 'awy'],
+                ],
                 paint: {
                     'fill-color': [
                         'case',
@@ -349,7 +363,11 @@ export const MapBox = ({
                 type: 'line',
                 source: 'openaip',
                 'source-layer': 'airspaces',
-                filter: ['==', ['get', 'icao_class'], 'g'],
+                filter: [
+                    'all',
+                    ['==', ['get', 'icao_class'], 'g'],
+                    ['!=', ['get', 'type'], 'awy'],
+                ],
                 paint: {
                     'line-color': '#787878',
                     'line-width': 2,
@@ -375,7 +393,11 @@ export const MapBox = ({
                 type: 'fill',
                 source: 'openaip',
                 'source-layer': 'airspaces',
-                filter: ['==', ['get', 'icao_class'], 'f'],
+                filter: [
+                    'all',
+                    ['==', ['get', 'icao_class'], 'f'],
+                    ['!=', ['get', 'type'], 'awy'],
+                ],
                 paint: {
                     'fill-color': [
                         'case',
@@ -402,7 +424,11 @@ export const MapBox = ({
                 type: 'line',
                 source: 'openaip',
                 'source-layer': 'airspaces',
-                filter: ['==', ['get', 'icao_class'], 'f'],
+                filter: [
+                    'all',
+                    ['==', ['get', 'icao_class'], 'f'],
+                    ['!=', ['get', 'type'], 'awy'],
+                ],
                 paint: {
                     'line-color': '#646464',
                     'line-width': 2,
@@ -428,7 +454,11 @@ export const MapBox = ({
                 type: 'fill',
                 source: 'openaip',
                 'source-layer': 'airspaces',
-                filter: ['==', ['get', 'icao_class'], 'e'],
+                filter: [
+                    'all',
+                    ['==', ['get', 'icao_class'], 'e'],
+                    ['!=', ['get', 'type'], 'awy'],
+                ],
                 paint: {
                     'fill-color': [
                         'case',
@@ -455,7 +485,11 @@ export const MapBox = ({
                 type: 'line',
                 source: 'openaip',
                 'source-layer': 'airspaces',
-                filter: ['==', ['get', 'icao_class'], 'e'],
+                filter: [
+                    'all',
+                    ['==', ['get', 'icao_class'], 'e'],
+                    ['!=', ['get', 'type'], 'awy'],
+                ],
                 paint: {
                     'line-color': '#646464',
                     'line-width': 2,
@@ -481,7 +515,11 @@ export const MapBox = ({
                 type: 'fill',
                 source: 'openaip',
                 'source-layer': 'airspaces',
-                filter: ['==', ['get', 'icao_class'], 'd'],
+                filter: [
+                    'all',
+                    ['==', ['get', 'icao_class'], 'd'],
+                    ['!=', ['get', 'type'], 'awy'],
+                ],
                 paint: {
                     'fill-color': [
                         'case',
@@ -509,7 +547,11 @@ export const MapBox = ({
                 type: 'line',
                 source: 'openaip',
                 'source-layer': 'airspaces',
-                filter: ['==', ['get', 'icao_class'], 'd'],
+                filter: [
+                    'all',
+                    ['==', ['get', 'icao_class'], 'd'],
+                    ['!=', ['get', 'type'], 'awy'],
+                ],
                 paint: {
                     'line-color': '#0064ff',
                     'line-width': 2,
@@ -535,7 +577,11 @@ export const MapBox = ({
                 type: 'fill',
                 source: 'openaip',
                 'source-layer': 'airspaces',
-                filter: ['==', ['get', 'icao_class'], 'c'],
+                filter: [
+                    'all',
+                    ['==', ['get', 'icao_class'], 'c'],
+                    ['!=', ['get', 'type'], 'awy'],
+                ],
                 paint: {
                     'fill-color': [
                         'case',
@@ -562,7 +608,11 @@ export const MapBox = ({
                 type: 'line',
                 source: 'openaip',
                 'source-layer': 'airspaces',
-                filter: ['==', ['get', 'icao_class'], 'c'],
+                filter: [
+                    'all',
+                    ['==', ['get', 'icao_class'], 'c'],
+                    ['!=', ['get', 'type'], 'awy'],
+                ],
                 paint: {
                     'line-color': '#ff00ff',
                     'line-width': 2,
@@ -588,7 +638,11 @@ export const MapBox = ({
                 type: 'fill',
                 source: 'openaip',
                 'source-layer': 'airspaces',
-                filter: ['==', ['get', 'icao_class'], 'b'],
+                filter: [
+                    'all',
+                    ['==', ['get', 'icao_class'], 'b'],
+                    ['!=', ['get', 'type'], 'awy'],
+                ],
                 paint: {
                     'fill-color': [
                         'case',
@@ -615,7 +669,11 @@ export const MapBox = ({
                 type: 'line',
                 source: 'openaip',
                 'source-layer': 'airspaces',
-                filter: ['==', ['get', 'icao_class'], 'b'],
+                filter: [
+                    'all',
+                    ['==', ['get', 'icao_class'], 'b'],
+                    ['!=', ['get', 'type'], 'awy'],
+                ],
                 paint: {
                     'line-color': '#0000ff',
                     'line-width': 2,
@@ -641,7 +699,11 @@ export const MapBox = ({
                 type: 'fill',
                 source: 'openaip',
                 'source-layer': 'airspaces',
-                filter: ['==', ['get', 'icao_class'], 'a'],
+                filter: [
+                    'all',
+                    ['==', ['get', 'icao_class'], 'a'],
+                    ['!=', ['get', 'type'], 'awy'],
+                ],
                 paint: {
                     'fill-color': [
                         'case',
@@ -668,7 +730,11 @@ export const MapBox = ({
                 type: 'line',
                 source: 'openaip',
                 'source-layer': 'airspaces',
-                filter: ['==', ['get', 'icao_class'], 'a'],
+                filter: [
+                    'all',
+                    ['==', ['get', 'icao_class'], 'a'],
+                    ['!=', ['get', 'type'], 'awy'],
+                ],
                 paint: {
                     'line-color': '#ff0000',
                     'line-width': 2,
@@ -694,6 +760,7 @@ export const MapBox = ({
                 type: 'symbol',
                 source: 'openaip',
                 'source-layer': 'airspaces',
+                filter: ['!=', ['get', 'type'], 'awy'],
                 layout: {
                     'text-field': ['get', 'name_label'],
                     'text-font': ['Open Sans Regular', 'Arial Unicode MS Regular'],
@@ -1018,6 +1085,70 @@ export const MapBox = ({
             )
         }
     }, [showObstacles, showReportingPoints])
+
+    // Effect to control airway filtering based on hideAirways setting
+    useEffect(() => {
+        if (!map.current) return
+
+        // List of all airspace layer IDs
+        const airspaceLayers = [
+            'airspace-fill-unclassified',
+            'airspace-outline-unclassified',
+            'airspace-fill-g',
+            'airspace-outline-g',
+            'airspace-fill-f',
+            'airspace-outline-f',
+            'airspace-fill-e',
+            'airspace-outline-e',
+            'airspace-fill-d',
+            'airspace-outline-d',
+            'airspace-fill-c',
+            'airspace-outline-c',
+            'airspace-fill-b',
+            'airspace-outline-b',
+            'airspace-fill-a',
+            'airspace-outline-a',
+            'airspace-labels',
+        ]
+
+        // Update filters for all airspace layers
+        airspaceLayers.forEach(layerId => {
+            if (map.current && map.current.getLayer(layerId)) {
+                const layer = map.current.getLayer(layerId)
+                if (!layer) return
+
+                // Build new filter based on hideAirways setting
+                let newFilter
+
+                if (layerId === 'airspace-labels') {
+                    // For labels layer, simpler filter structure
+                    newFilter = hideAirways ? ['!=', ['get', 'type'], 'awy'] : undefined
+                } else if (layerId.includes('unclassified')) {
+                    // For unclassified layers
+                    const baseFilter = [
+                        '!',
+                        ['in', ['get', 'icao_class'], ['literal', ['a', 'b', 'c', 'd', 'e', 'f', 'g']]],
+                    ]
+                    newFilter = hideAirways
+                        ? ['all', baseFilter, ['!=', ['get', 'type'], 'awy']]
+                        : baseFilter
+                } else {
+                    // For ICAO class-specific layers (a-g)
+                    const icaoClass = layerId.match(/-(a|b|c|d|e|f|g)$/)?.[1]
+                    if (icaoClass) {
+                        const baseFilter = ['==', ['get', 'icao_class'], icaoClass]
+                        newFilter = hideAirways
+                            ? ['all', baseFilter, ['!=', ['get', 'type'], 'awy']]
+                            : baseFilter
+                    }
+                }
+
+                if (newFilter !== undefined) {
+                    map.current.setFilter(layerId, newFilter)
+                }
+            }
+        })
+    }, [hideAirways])
 
     return (
         <div

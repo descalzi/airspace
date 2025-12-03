@@ -98,6 +98,20 @@ export const SettingsDialog = ({
                     </div>
 
                     <div className="setting-group">
+                        <label className="setting-label">Hide Airways</label>
+                        <label className="toggle-switch">
+                            <input
+                                type="checkbox"
+                                checked={settings.hideAirways}
+                                onChange={e =>
+                                    onUpdateSettings({ hideAirways: e.target.checked })
+                                }
+                            />
+                            <span className="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div className="setting-group">
                         <label className="setting-label">Favourite Airports/Navaids</label>
                         <button
                             className="settings-button"
