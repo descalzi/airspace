@@ -13,11 +13,8 @@ node_modules/
 dist-ssr
 *.local
 
-# Environment variables
-.env
+# Environment variables (only ignore local overrides, not the committed .env files)
 .env.local
-.env.production
-.env.development
 .env*.local
 
 # Editor directories and files
