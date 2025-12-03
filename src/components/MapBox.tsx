@@ -1090,6 +1090,8 @@ export const MapBox = ({
     useEffect(() => {
         if (!map.current) return
 
+        console.info('[Airways Filter] Applying hideAirways =', hideAirways)
+
         // List of all airspace layer IDs
         const airspaceLayers = [
             'airspace-fill-unclassified',
@@ -1144,6 +1146,7 @@ export const MapBox = ({
                 }
 
                 if (newFilter !== undefined) {
+                    console.info('[Airways Filter] Setting filter for', layerId, ':', JSON.stringify(newFilter))
                     map.current.setFilter(layerId, newFilter)
                 }
             }

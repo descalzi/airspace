@@ -23,7 +23,7 @@ const DEFAULT_SETTINGS: Settings = {
     favourites: [],
     showObstacles: true,
     showReportingPoints: true,
-    hideAirways: true,
+    hideAirways: false,
     hiddenNotams: [],
 }
 
