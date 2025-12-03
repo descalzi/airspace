@@ -14,7 +14,7 @@ export interface Settings {
     favourites: Favourite[]
     showObstacles: boolean
     showReportingPoints: boolean
-    hideAirways: boolean
+    showAirways: boolean
     hiddenNotams: string[] // Array of NOTAM numbers that are hidden
 }
 
@@ -23,7 +23,7 @@ const DEFAULT_SETTINGS: Settings = {
     favourites: [],
     showObstacles: true,
     showReportingPoints: true,
-    hideAirways: false,
+    showAirways: false,
     hiddenNotams: [],
 }
 

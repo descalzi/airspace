@@ -20,7 +20,7 @@ interface MapBoxProps {
     onMapReady?: (map: mapboxgl.Map) => void
     showObstacles?: boolean
     showReportingPoints?: boolean
-    hideAirways?: boolean
+    showAirways?: boolean
 }
 
 export const MapBox = ({
@@ -28,7 +28,7 @@ export const MapBox = ({
     onMapReady,
     showObstacles = true,
     showReportingPoints = true,
-    hideAirways = true,
+    showAirways = false,
 }: MapBoxProps) => {
     const mapContainer = useRef<HTMLDivElement>(null)
     const map = useRef<mapboxgl.Map | null>(null)
@@ -1086,11 +1086,11 @@ export const MapBox = ({
         }
     }, [showObstacles, showReportingPoints])
 
-    // Effect to control airway filtering based on hideAirways setting
+    // Effect to control airway filtering based on showAirways setting
     useEffect(() => {
         if (!map.current) return
 
-        console.info('[Airways Filter] Applying hideAirways =', hideAirways)
+        console.info('[Airways Filter] Applying showAirways =', showAirways)
 
         // List of all airspace layer IDs
         const airspaceLayers = [
@@ -1119,19 +1119,21 @@ export const MapBox = ({
                 const layer = map.current.getLayer(layerId)
                 if (!layer) return
 
-                // Build new filter based on hideAirways setting
+                // Build new filter based on showAirways setting
+                // When showAirways is FALSE, we filter OUT airways (hide them)
+                // When showAirways is TRUE, we show everything (no airway filter)
                 let newFilter
 
                 if (layerId === 'airspace-labels') {
                     // For labels layer, simpler filter structure
-                    newFilter = hideAirways ? ['!=', ['get', 'type'], 'awy'] : undefined
+                    newFilter = !showAirways ? ['!=', ['get', 'type'], 'awy'] : undefined
                 } else if (layerId.includes('unclassified')) {
                     // For unclassified layers
                     const baseFilter = [
                         '!',
                         ['in', ['get', 'icao_class'], ['literal', ['a', 'b', 'c', 'd', 'e', 'f', 'g']]],
                     ]
-                    newFilter = hideAirways
+                    newFilter = !showAirways
                         ? ['all', baseFilter, ['!=', ['get', 'type'], 'awy']]
                         : baseFilter
                 } else {
@@ -1139,7 +1141,7 @@ export const MapBox = ({
                     const icaoClass = layerId.match(/-(a|b|c|d|e|f|g)$/)?.[1]
                     if (icaoClass) {
                         const baseFilter = ['==', ['get', 'icao_class'], icaoClass]
-                        newFilter = hideAirways
+                        newFilter = !showAirways
                             ? ['all', baseFilter, ['!=', ['get', 'type'], 'awy']]
                             : baseFilter
                     }
@@ -1151,7 +1153,7 @@ export const MapBox = ({
                 }
             }
         })
-    }, [hideAirways])
+    }, [showAirways])
 
     return (
         <div

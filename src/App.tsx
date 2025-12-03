@@ -182,7 +182,7 @@ function App() {
                 onMapReady={setMapInstance}
                 showObstacles={settings.showObstacles}
                 showReportingPoints={settings.showReportingPoints}
-                hideAirways={settings.hideAirways}
+                showAirways={settings.showAirways}
             />
 
             <div className="panels-container">
