@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { NotamDialog } from './NotamDialog'
+import type { Map } from 'mapbox-gl'
 
 interface NotamData {
     notamNumber: string
@@ -19,6 +20,7 @@ interface NotamPanelProps {
     hideNotam: (notamNumber: string) => void
     isNotamHidden: (notamNumber: string) => boolean
     clearAllHiddenNotams: () => void
+    map: Map | null
 }
 
 export const NotamPanel = ({
@@ -29,6 +31,7 @@ export const NotamPanel = ({
     hideNotam,
     isNotamHidden,
     clearAllHiddenNotams,
+    map,
 }: NotamPanelProps) => {
     const [notams, setNotams] = useState<NotamData[] | null>(null)
     const [loading, setLoading] = useState(false)
@@ -126,6 +129,7 @@ export const NotamPanel = ({
                     hideNotam={hideNotam}
                     isNotamHidden={isNotamHidden}
                     clearAllHiddenNotams={clearAllHiddenNotams}
+                    map={map}
                 />
             )}
         </div>

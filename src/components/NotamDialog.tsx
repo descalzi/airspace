@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import './WeatherDialog.css'
 import { getFIRsByCountry } from '../utils/firLookup'
+import { parseNotamCoordinates, type NotamCoordinates } from '../utils/notamCoordinates'
+import type { Map } from 'mapbox-gl'
 
 interface NotamData {
     notamNumber: string
@@ -23,6 +25,7 @@ interface NotamDialogProps {
     hideNotam: (notamNumber: string) => void
     isNotamHidden: (notamNumber: string) => boolean
     clearAllHiddenNotams: () => void
+    map: Map | null
 }
 
 // Parse date string to Date object
@@ -283,9 +286,13 @@ export const NotamDialog = ({
     hideNotam,
     isNotamHidden,
     clearAllHiddenNotams,
+    map,
 }: NotamDialogProps) => {
     // Track which NOTAMs are showing the full ICAO message
     const [expandedNotams, setExpandedNotams] = useState<Set<number>>(new Set())
+
+    // Track active highlight layer
+    const [highlightLayerId, setHighlightLayerId] = useState<string | null>(null)
 
     // Track current time for schedule status updates
     const [, setCurrentTime] = useState<number>(0)
@@ -392,6 +399,122 @@ export const NotamDialog = ({
                 newSet.add(index)
             }
             return newSet
+        })
+    }
+
+    // Clean up map highlight when component unmounts
+    useEffect(() => {
+        return () => {
+            if (map && highlightLayerId) {
+                // Remove the highlight source and layers if they exist
+                if (map.getLayer(`${highlightLayerId}-circle`)) {
+                    map.removeLayer(`${highlightLayerId}-circle`)
+                }
+                if (map.getLayer(`${highlightLayerId}-pulse`)) {
+                    map.removeLayer(`${highlightLayerId}-pulse`)
+                }
+                if (map.getSource(highlightLayerId)) {
+                    map.removeSource(highlightLayerId)
+                }
+            }
+        }
+    }, [map, highlightLayerId])
+
+    // Handle viewing position on map
+    const handleViewOnMap = (coordinates: NotamCoordinates) => {
+        if (!map) return
+
+        // Remove previous highlight if exists
+        if (highlightLayerId) {
+            if (map.getLayer(`${highlightLayerId}-circle`)) {
+                map.removeLayer(`${highlightLayerId}-circle`)
+            }
+            if (map.getLayer(`${highlightLayerId}-pulse`)) {
+                map.removeLayer(`${highlightLayerId}-pulse`)
+            }
+            if (map.getSource(highlightLayerId)) {
+                map.removeSource(highlightLayerId)
+            }
+        }
+
+        // Create new unique ID for this highlight
+        const newLayerId = `notam-highlight-${Date.now()}`
+        setHighlightLayerId(newLayerId)
+
+        // zoom level
+        const targetZoom = 11
+
+        // Calculate offset to account for the NOTAM dialog panel on the right
+        // The panel is typically 400-500px wide, so we offset the center to the left
+        const container = map.getContainer()
+        const containerWidth = container.offsetWidth
+
+        // Offset by approximately 25% of screen width to the left (negative longitude offset)
+        // This moves the map center to the left, making the point appear more to the left, away from the right panel
+        const offsetPixels = containerWidth * 0.10
+
+        // Convert pixel offset to longitude offset at the target zoom level
+        // At zoom level z, one degree of longitude = 256 * 2^z / 360 pixels at the equator
+        // Adjust for latitude using cos(lat)
+        const metersPerPixel = (156543.03392 * Math.cos(coordinates.latitude * Math.PI / 180)) / Math.pow(2, targetZoom)
+        const offsetMeters = offsetPixels * metersPerPixel
+        const offsetLongitude = offsetMeters / (111320 * Math.cos(coordinates.latitude * Math.PI / 180))
+
+        // Fly to the coordinates with offset (subtract to move left)
+        map.flyTo({
+            center: [coordinates.longitude - offsetLongitude, coordinates.latitude],
+            zoom: targetZoom,
+            duration: 1500,
+        })
+
+        // Add a source for the highlight
+        map.addSource(newLayerId, {
+            type: 'geojson',
+            data: {
+                type: 'Feature',
+                geometry: {
+                    type: 'Point',
+                    coordinates: [coordinates.longitude, coordinates.latitude],
+                },
+                properties: {},
+            },
+        })
+
+        // Add circle layer for the highlight
+        map.addLayer({
+            id: `${newLayerId}-circle`,
+            type: 'circle',
+            source: newLayerId,
+            paint: {
+                'circle-radius': coordinates.radius
+                    ? [
+                          'interpolate',
+                          ['exponential', 2],
+                          ['zoom'],
+                          0,
+                          0,
+                          20,
+                          (coordinates.radius * 1852) / 0.075, // Convert NM to meters, adjust for zoom
+                      ]
+                    : 30,
+                'circle-color': '#ff6b6b',
+                'circle-opacity': 0.3,
+                'circle-stroke-width': 2,
+                'circle-stroke-color': '#ff0000',
+                'circle-stroke-opacity': coordinates.radius ? 0.8 : 0,
+            },
+        })
+
+        // Add pulsing effect layer
+        map.addLayer({
+            id: `${newLayerId}-pulse`,
+            type: 'circle',
+            source: newLayerId,
+            paint: {
+                'circle-radius': 8,
+                'circle-color': '#ff0000',
+                'circle-opacity': 0.8,
+            },
         })
     }
 
@@ -524,6 +647,7 @@ export const NotamDialog = ({
                             )
                             const schedule = parseSchedule(notam.icaoMessage)
                             const altitudeLimits = parseAltitudeLimits(notam.icaoMessage)
+                            const coordinates = parseNotamCoordinates(notam.icaoMessage)
 
                             return (
                                 <div
@@ -638,25 +762,43 @@ export const NotamDialog = ({
                                                 ? notam.icaoMessage
                                                 : notam.traditionalMessageFrom4thWord}
                                         </div>
-                                        {notam.traditionalMessageFrom4thWord.endsWith('...') && (
-                                            <button
-                                                onClick={() => toggleNotamExpansion(idx)}
-                                                style={{
-                                                    marginTop: '6px',
-                                                    padding: '4px 8px',
-                                                    fontSize: '10px',
-                                                    cursor: 'pointer',
-                                                    background: 'rgba(100,150,200,0.3)',
-                                                    border: '1px solid rgba(100,150,200,0.5)',
-                                                    borderRadius: '3px',
-                                                    color: 'inherit',
-                                                }}
-                                            >
-                                                {expandedNotams.has(idx)
-                                                    ? 'Show Summary'
-                                                    : 'Show Full Message'}
-                                            </button>
-                                        )}
+                                        <div style={{ display: 'flex', gap: '6px', marginTop: '6px', flexWrap: 'wrap' }}>
+                                            {notam.traditionalMessageFrom4thWord.endsWith('...') && (
+                                                <button
+                                                    onClick={() => toggleNotamExpansion(idx)}
+                                                    style={{
+                                                        padding: '4px 8px',
+                                                        fontSize: '10px',
+                                                        cursor: 'pointer',
+                                                        background: 'rgba(100,150,200,0.3)',
+                                                        border: '1px solid rgba(100,150,200,0.5)',
+                                                        borderRadius: '3px',
+                                                        color: 'inherit',
+                                                    }}
+                                                >
+                                                    {expandedNotams.has(idx)
+                                                        ? 'Show Summary'
+                                                        : 'Show Full Message'}
+                                                </button>
+                                            )}
+                                            {coordinates && (
+                                                <button
+                                                    onClick={() => handleViewOnMap(coordinates)}
+                                                    style={{
+                                                        padding: '4px 8px',
+                                                        fontSize: '10px',
+                                                        cursor: 'pointer',
+                                                        background: 'rgba(100,150,200,0.3)',
+                                                        border: '1px solid rgba(100,150,200,0.5)',
+                                                        borderRadius: '3px',
+                                                        color: 'inherit',
+                                                    }}
+                                                    title={"View on map"}
+                                                >
+                                                    View on Map
+                                                </button>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             )
@@ -852,6 +994,7 @@ export const NotamDialog = ({
                                             )
                                             const schedule = parseSchedule(notam.icaoMessage)
                                             const altitudeLimits = parseAltitudeLimits(notam.icaoMessage)
+                                            const coordinates = parseNotamCoordinates(notam.icaoMessage)
 
                                             return (
                                                 <div
@@ -967,29 +1110,47 @@ export const NotamDialog = ({
                                                                 ? notam.icaoMessage
                                                                 : notam.traditionalMessageFrom4thWord}
                                                         </div>
-                                                        {notam.traditionalMessageFrom4thWord.endsWith(
-                                                            '...',
-                                                        ) && (
-                                                            <button
-                                                                onClick={() =>
-                                                                    toggleNotamExpansion(idx + 10000)
-                                                                }
-                                                                style={{
-                                                                    marginTop: '6px',
-                                                                    padding: '4px 8px',
-                                                                    fontSize: '10px',
-                                                                    cursor: 'pointer',
-                                                                    background: 'rgba(100,150,200,0.3)',
-                                                                    border: '1px solid rgba(100,150,200,0.5)',
-                                                                    borderRadius: '3px',
-                                                                    color: 'inherit',
-                                                                }}
-                                                            >
-                                                                {expandedNotams.has(idx + 10000)
-                                                                    ? 'Show Summary'
-                                                                    : 'Show Full Message'}
-                                                            </button>
-                                                        )}
+                                                        <div style={{ display: 'flex', gap: '6px', marginTop: '6px', flexWrap: 'wrap' }}>
+                                                            {notam.traditionalMessageFrom4thWord.endsWith(
+                                                                '...',
+                                                            ) && (
+                                                                <button
+                                                                    onClick={() =>
+                                                                        toggleNotamExpansion(idx + 10000)
+                                                                    }
+                                                                    style={{
+                                                                        padding: '4px 8px',
+                                                                        fontSize: '10px',
+                                                                        cursor: 'pointer',
+                                                                        background: 'rgba(100,150,200,0.3)',
+                                                                        border: '1px solid rgba(100,150,200,0.5)',
+                                                                        borderRadius: '3px',
+                                                                        color: 'inherit',
+                                                                    }}
+                                                                >
+                                                                    {expandedNotams.has(idx + 10000)
+                                                                        ? 'Show Summary'
+                                                                        : 'Show Full Message'}
+                                                                </button>
+                                                            )}
+                                                            {coordinates && (
+                                                                <button
+                                                                    onClick={() => handleViewOnMap(coordinates)}
+                                                                    style={{
+                                                                        padding: '4px 8px',
+                                                                        fontSize: '10px',
+                                                                        cursor: 'pointer',
+                                                                        background: 'rgba(100,150,200,0.3)',
+                                                                        border: '1px solid rgba(100,150,200,0.5)',
+                                                                        borderRadius: '3px',
+                                                                        color: 'inherit',
+                                                                    }}
+                                                                    title={`View position on map${coordinates.radius ? ` (${coordinates.radius}NM radius)` : ''}`}
+                                                                >
+                                                                    View on Map
+                                                                </button>
+                                                            )}
+                                                        </div>
                                                     </div>
                                                 </div>
                                             )

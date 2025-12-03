@@ -241,6 +241,7 @@ function App() {
                     hideNotam={hideNotam}
                     isNotamHidden={isNotamHidden}
                     clearAllHiddenNotams={clearAllHiddenNotams}
+                    map={mapInstance}
                 />
             </div>
 
